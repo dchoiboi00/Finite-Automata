@@ -10,14 +10,17 @@
 
 #include <stdbool.h>
 
-/**
- * The data structure used to represent a deterministic finite automaton.
- * @see FOCS Section 10.2
- * Note that YOU must specify this data structure, although you can hide
- * (encapsulate) its implementation behind the declared API functions and
- * only provide a partial declaration in the header file.
- */
-typedef struct DFA *DFA;
+typedef struct {
+    int transitions[128];   //ASCII value, char will automatically convert to 0-127 int
+    bool doesAccept;
+}DFAState;
+
+//we have an array of states, in which each state contains transition destinations to other states
+typedef struct DFA{
+    int totalStates;
+    DFAState* states;
+    int currentState;
+}*DFA;
 
 /**
  * Allocate and return a new DFA containing the given number of states.

@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include "BitSet.h"
 
+
 // Use the longest int we can get
 typedef unsigned long long int bitset_t;
 

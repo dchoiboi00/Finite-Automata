@@ -11,12 +11,18 @@
 #include <stdbool.h>
 #include "Set.h"
 
-/**
- * The data structure used to represent a nondeterministic finite automaton.
- * @see FOCS Section 10.3
- * @see Comments for DFA in dfa.h
- */
-typedef struct NFA *NFA;
+
+typedef struct {
+    Set transitions[128];   //an array of 128 Sets
+    bool doesAccept;
+}NFAState;
+
+//we have an array of states, in which each state contains transition destinations to other states. Also, we have a Set (IntHashSet) to store the set of current states
+typedef struct NFA{
+    int totalStates;
+    NFAState* states;
+    Set currentStates;
+}*NFA;
 
 /**
  * Allocate and return a new NFA containing the given number of states.
