@@ -29,7 +29,7 @@ NFA new_NFA(int nstates){
     for (int i = 0; i < nstates; i++){
         this->states[i].doesAccept = false;     //set all states as non-accepting
         for (int j = 0; j < 128; j++){
-            this->states[i].transitions[j] = new_Set(255);   //instead of initializing as -1 (no destination), we make empty sets of size 255. This is the equivalent 
+            this->states[i].transitions[j] = new_Set(255);   //instead of initializing as -1 (no destination), we make empty sets of size 255. An empty set means no transition
         }
     }
     
