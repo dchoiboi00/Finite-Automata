@@ -13,9 +13,9 @@
 
 
 
-DFA new_DFA(int nstates) {
+DFA* new_DFA(int nstates) {
     //create instance
-    DFA this = (DFA)malloc(sizeof(DFA));
+    DFA* this = (DFA*)malloc(sizeof(DFA));
     if(this == NULL){
         return NULL;
     }
@@ -36,7 +36,7 @@ DFA new_DFA(int nstates) {
     return this;
 }
 
-void DFA_free(DFA dfa){
+void DFA_free(DFA *dfa){
     for (int i = 0; i < dfa->totalStates; i++){
         //free(dfa->states[i].transitions);  //no need for this since it was not dynamically allocated
     }
@@ -44,39 +44,39 @@ void DFA_free(DFA dfa){
     free(dfa);
 }
 
-int DFA_get_size(DFA dfa){
+int DFA_get_size(DFA *dfa){
     return dfa->totalStates;
 }
 
-int DFA_get_transition(DFA dfa, int src, char sym){
+int DFA_get_transition(DFA *dfa, int src, char sym){
     return dfa->states[src].transitions[(int)sym];
 }
 
-void DFA_set_transition(DFA dfa, int src, char sym, int dst){
+void DFA_set_transition(DFA *dfa, int src, char sym, int dst){
     dfa->states[src].transitions[(int)sym] = dst;
 }
 
-void DFA_set_transition_str(DFA dfa, int src, char *str, int dst){
+void DFA_set_transition_str(DFA *dfa, int src, char *str, int dst){
     for (int i = 0; i < strlen(str); i++){
         dfa->states[src].transitions[(int)str[i]] = dst;
     }
 }
 
-void DFA_set_transition_all(DFA dfa, int src, int dst){
+void DFA_set_transition_all(DFA *dfa, int src, int dst){
     for (int i = 0; i < 128; i++){
         dfa->states[src].transitions[i] = dst;
     }
 }
 
-void DFA_set_accepting(DFA dfa, int state, bool value){
+void DFA_set_accepting(DFA *dfa, int state, bool value){
     dfa->states[state].doesAccept = value;
 }
 
-bool DFA_get_accepting(DFA dfa, int state){
+bool DFA_get_accepting(DFA *dfa, int state){
     return dfa->states[state].doesAccept;
 }
 
-bool DFA_execute(DFA dfa, char *input){
+bool DFA_execute(DFA *dfa, char *input){
     for (int i = 0; i < strlen(input); i++) {
         int nextDest = dfa->states[dfa->currentState].transitions[(int)input[i]];
         if (nextDest == -1) {  //if no destination, the automaton rejects

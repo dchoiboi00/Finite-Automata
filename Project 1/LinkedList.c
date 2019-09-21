@@ -8,36 +8,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "LinkedList.h"
+#include "Set.h"
 
 /**
  * Structure for each element of a doubly-linked LinkedList.
  */
-typedef struct Node* Node;
-struct Node {
+
+typedef struct Node {
 	void *data;
-	Node next;
-	Node prev;
-};
+	struct Node* next;
+	struct Node* prev;
+}Node;
 
 /**
  * Linked list with first and last (head and tail) pointers.
  */
 struct LinkedList {
-	Node first;
-	Node last;
+	Node* first;
+	Node* last;
 };
 
 /**
  * Allocate, initialize and return a new (empty) LinkedList.
  */
-LinkedList new_LinkedList() {
-	LinkedList this = (LinkedList)malloc(sizeof(struct LinkedList));
+LinkedList *new_LinkedList() {
+	LinkedList *this = (LinkedList*)malloc(sizeof(struct LinkedList));
 	this->first = this->last = NULL;
 	return this;
 }
 
-static Node new_Node(void *data) {
-	Node this = (Node)malloc(sizeof(struct Node));
+static Node *new_Node(void *data) {
+	Node* this = (Node*)malloc(sizeof(struct Node));
 	this->data = data;
 	this->next = this->prev = NULL;
 	return this;
@@ -48,16 +49,16 @@ static Node new_Node(void *data) {
  * If boolean free_data_also is true, also free the data associated with
  * each element.
  */
-void LinkedList_free(LinkedList this, bool free_data_also) {
+void LinkedList_free(LinkedList *this, bool free_data_also) {
 	if (this == NULL) {
 		return;
 	}
 	// Free the elements
-	Node node = this->first;
+	Node *node = this->first;
 	while (node != NULL) {
-		Node next = node->next;
+		Node* next = node->next;
 		if (free_data_also && node->data != NULL) {
-			free(node->data);
+			IntHashSet_free(node->data);
 		}
 		free(node);
 		node = next;
@@ -69,15 +70,15 @@ void LinkedList_free(LinkedList this, bool free_data_also) {
 /**
  * Return true if the given LinkedList is empty.
  */
-bool LinkedList_isEmpty(const LinkedList this) {
+bool LinkedList_isEmpty(const LinkedList *this) {
 	return this->first == NULL;
 }
 
 /**
  * Add the given void* value at the front of the given LinkedList.
  */
-void LinkedList_add_at_front(LinkedList this, void *data) {
-	Node node = new_Node(data);
+void LinkedList_add_at_front(LinkedList *this, void *data) {
+	Node* node = new_Node(data);
 	node->next = this->first;
 	if (this->first != NULL) {
 		this->first->prev = node;
@@ -91,8 +92,8 @@ void LinkedList_add_at_front(LinkedList this, void *data) {
 /**
  * Add the given void* value at the end of the given LinkedList.
  */
-void LinkedList_add_at_end(LinkedList this, void *data) {
-	Node node = new_Node(data);
+void LinkedList_add_at_end(LinkedList *this, void *data) {
+	Node *node = new_Node(data);
 	node->prev = this->last;
 	if (this->last != NULL) {
 		this->last->next = node;
@@ -107,8 +108,8 @@ void LinkedList_add_at_end(LinkedList this, void *data) {
  * Return true if then given LinkedList contains given void* value.
  * Note this doesn't any kind of equals function, just plain ``==''.
  */
-bool LinkedList_contains(const LinkedList this, void *data) {
-	for (Node node=this->first; node != NULL; node=node->next) {
+bool LinkedList_contains(const LinkedList *this, void *data) {
+	for (Node *node=this->first; node != NULL; node=node->next) {
 		if (node->data == data) {
 			return true;
 		}
@@ -121,8 +122,8 @@ bool LinkedList_contains(const LinkedList this, void *data) {
  * This function uses ``=='' to test for the element.
  * Note that this does not free the data associated with the element.
  */
-void LinkedList_remove(LinkedList this, void *data) {
-	for (Node node=this->first; node != NULL; node=node->next) {
+void LinkedList_remove(LinkedList *this, void *data) {
+	for (Node *node=this->first; node != NULL; node=node->next) {
 		if (node->data == data) {
 			if (node == this->first) {
 				this->first = node->next;
@@ -147,9 +148,9 @@ void LinkedList_remove(LinkedList this, void *data) {
  * NULL if there is no such.
  * Note that this means you can't store NULL in a LinkedList. C'est la vie.
  */
-void* LinkedList_elementAt(LinkedList this, int index) {
+void* LinkedList_elementAt(LinkedList *this, int index) {
 	int i = 0;
-	for (Node node=this->first; node != NULL; node=node->next) {
+	for (Node *node=this->first; node != NULL; node=node->next) {
 		if (i == index) {
 			return node->data;
 		}
@@ -162,7 +163,7 @@ void* LinkedList_elementAt(LinkedList this, int index) {
  * Remove and return the first element from the given LinkedList.
  * Returns NULL if the list is empty.
  */
-void* LinkedList_pop(LinkedList this) {
+void* LinkedList_pop(LinkedList *this) {
 	void *data = LinkedList_elementAt(this, 0);
 	if (data != NULL) {
 		LinkedList_remove(this, data); // Removes first occurrence
@@ -174,8 +175,8 @@ void* LinkedList_pop(LinkedList this) {
  * Call the given function on each element of given LinkedList, passing the
  * void* value to the function.
  */
-void LinkedList_iterate(const LinkedList this, void (*func)(void *)) {
-	for (Node node=this->first; node != NULL; node=node->next) {
+void LinkedList_iterate(const LinkedList *this, void (*func)(void *)) {
+	for (Node *node=this->first; node != NULL; node=node->next) {
 		func(node->data);
 	}
 }
@@ -185,15 +186,15 @@ void LinkedList_iterate(const LinkedList this, void (*func)(void *)) {
  * to this->first and increments following next pointers until NULL.
  */
 struct LinkedListIterator {
-	Node next;
+	Node *next;
 };
 
 /**
  * Return an LinkedListIterator for the given LinkedList.
  * Don't forget to free() this when you're done iterating.
  */
-LinkedListIterator LinkedList_iterator(const LinkedList this) {
-	LinkedListIterator iterator = (LinkedListIterator)malloc(sizeof(struct LinkedListIterator));
+LinkedListIterator* LinkedList_iterator(const LinkedList *this) {
+	LinkedListIterator *iterator = (LinkedListIterator*)malloc(sizeof(struct LinkedListIterator));
 	iterator->next = this->first;
 	return iterator;
 }
@@ -202,7 +203,7 @@ LinkedListIterator LinkedList_iterator(const LinkedList this) {
  * Return true if the given LinkedListIterator will return another element
  * if LinkedListIterator_next() is called.
  */
-bool LinkedListIterator_hasNext(const LinkedListIterator this) {
+bool LinkedListIterator_hasNext(const LinkedListIterator *this) {
 	return this->next != NULL;
 }
 
@@ -213,7 +214,7 @@ bool LinkedListIterator_hasNext(const LinkedListIterator this) {
  * This means that you can't store NULL in a LinkedList. C'est la vie.
  * It would be easy to allow it and signal `no such element' some other way...
  */
-void* LinkedListIterator_next(LinkedListIterator this) {
+void* LinkedListIterator_next(LinkedListIterator *this) {
 	if (this->next == NULL) {
 		return NULL;
 	} else {
