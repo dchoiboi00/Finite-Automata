@@ -17,7 +17,7 @@ CFLAGS = -g -std=c99 -Wall -Werror
 
 programs: $(PROGRAMS)
 
-auto: dfa.o nfa.o main.o nfa2dfa.o IntHashSet.o BitSet.o LinkedList.o
+auto: dfa.o nfa.o main.o IntHashSet.o BitSet.o LinkedList.o
 	$(CC) -o $@ $^
 
 IntHashSet LinkedList BitSet:

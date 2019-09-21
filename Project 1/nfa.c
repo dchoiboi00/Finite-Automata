@@ -24,6 +24,7 @@ NFA new_NFA(int nstates){
     Set initialstate = new_Set(255);
     Set_insert(initialstate, 0);
     this->currentStates = initialstate;   //we start from 0
+    //IntHashSet_free(initialstate);
     
     //initialize NFAState variables
     for (int i = 0; i < nstates; i++){
@@ -42,7 +43,12 @@ void NFA_free(NFA nfa){
             Set_free(nfa->states[i].transitions[j]);   //free every set in the set array
         }
     }
-    Set_free(nfa->currentStates);
+    for (int i = 0; i < nfa->totalStates; i++){
+        //free(nfa->states[i].transitions);  //no need since it was not dynamically allocated
+    }
+    if (!Set_isEmpty(nfa->currentStates)){
+        Set_free(nfa->currentStates);
+    }
     free(nfa->states);
     free(nfa);
 }
@@ -52,11 +58,11 @@ int NFA_get_size(NFA nfa){
 }
 
 Set NFA_get_transitions(NFA nfa, int state, char sym){
-    return nfa->states[state].transitions[sym];
+    return nfa->states[state].transitions[(int)sym];
 }
 
 void NFA_add_transition(NFA nfa, int src, char sym, int dst){
-    Set_insert(nfa->states[src].transitions[sym], dst);
+    Set_insert(nfa->states[src].transitions[(int)sym], dst);
 }
 
 void NFA_add_transition_all(NFA nfa, int src, int dst){
@@ -81,30 +87,45 @@ bool NFA_execute(NFA nfa, char *input){
     //keep updating our set of states for each input character
     int i = 0;   //iterator for input string
     int state;    //iterator for each possible state in currentStates
+    Set updated_currentStates;
     SetIterator possible_states_iterator;
     while (input[i] != '\0') {  //stops at termination of string 'input'
-        Set updated_currentStates = new_Set(255);
+        updated_currentStates = new_Set(255);
         possible_states_iterator = Set_iterator(nfa->currentStates);
         while (SetIterator_hasNext(possible_states_iterator)){
             state = SetIterator_next(possible_states_iterator);
-            Set_union(updated_currentStates, nfa->states[state].transitions[input[i]]);
+            Set_union(updated_currentStates, nfa->states[state].transitions[(int)input[i]]);
         }
         nfa->currentStates = updated_currentStates;
         i++;
+        
     }
+    
     
     //check our final set of states to see if any are in accepting states
     int final_state;
     SetIterator check_for_accepting = Set_iterator(nfa->currentStates);
     while (SetIterator_hasNext(check_for_accepting)){
         final_state = SetIterator_next(check_for_accepting);
-        printf("%d", final_state);
+        //printf("%d", final_state);
         if (nfa->states[final_state].doesAccept){
             nfa->currentStates = initialstate;  //reset before returning true
+            
+            
+            free(check_for_accepting);
+//            IntHashSet_free(initialstate);
+            free(possible_states_iterator);
+//            Set_free(updated_currentStates);
             return true;
         }
     }
-    //else
+    //ELSE
     nfa->currentStates = initialstate;  //reset before returning false
+    
+    
+    free(check_for_accepting);
+//    IntHashSet_free(initialstate);
+    free(possible_states_iterator);
+//    Set_free(updated_currentStates);
     return false;
 }

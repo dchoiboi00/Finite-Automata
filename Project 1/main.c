@@ -26,7 +26,6 @@ DFA csc173() {
     DFA_set_transition(this, 4, '7', 5);
     DFA_set_transition(this, 5, '3', 6);
     DFA_set_accepting(this, 6, true);
-    
     return this;
 }
 
@@ -200,13 +199,16 @@ DFA NFA_to_DFA(NFA nfa){
     Set initial_set_zero = new_Set(255);
     Set_insert(initial_set_zero, 0);
     LinkedList_add_at_front(DFA_sets_labels, initial_set_zero);
+    //Set_free(initial_set_zero);
     
     //This iterator is VERY IMPORTANT. I tried using the LinkedListIterator, but the iterator would only iterate through the linkedlist it was given at its initialization. In other words, if I tried to LinkedList_add_at_end, the iterator would not receive that new input. It took me 3 and a half hours to solve this bug, until I found this iterator < num_States did the job.
     int iterator = 0;
     //While we have more dfa states to look at
+    DFAState* curr_state;
+    Set curr_set_label;
     while (iterator < num_States) {
-        DFAState* curr_state = LinkedList_elementAt(DFA_states, iterator);
-        Set curr_set_label = LinkedList_elementAt(DFA_sets_labels, iterator);
+        curr_state = LinkedList_elementAt(DFA_states, iterator);
+        curr_set_label = LinkedList_elementAt(DFA_sets_labels, iterator);
         
         //For every dfa state, look at all 128 input char possibilities. Create a new state with the appropriate set notation label if needed. Add it to the end of the linkedlist. Keep going until we have finished added all the needed dfa states.
         for (int i = 0; i < 128; i++) {
@@ -220,6 +222,7 @@ DFA NFA_to_DFA(NFA nfa){
                     curr_state->doesAccept = true;
                 }
             }
+            free(curr_set_label_iterator);
             
             //Try to find the position of that set-label, since we need to link that transition. If we did not find the set-label, create a new state.
             int contains = -1;
@@ -230,7 +233,8 @@ DFA NFA_to_DFA(NFA nfa){
                 if (Set_equals(curr_set, new_set_label)) {  //if we found it
                     contains = state_number;
                 }
-                state_number++;   //we did not find the set, increment state_number
+                state_number++; //we did not find the set, increment state_number
+                //Set_free(curr_set);
             }
             free(search_iterator);
             
@@ -241,12 +245,16 @@ DFA NFA_to_DFA(NFA nfa){
                 curr_state->transitions[i] = num_States;  //num_States is the correct number to make the new state, and link it to the current state
                 LinkedList_add_at_end(DFA_states, new_state);
                 LinkedList_add_at_end(DFA_sets_labels, new_set_label);
+                //free(new_state);
                 num_States++;  //increment num_States
             } else if (!(Set_isEmpty(new_set_label))){
                 curr_state->transitions[i] = contains;
             }
+            
+            //Set_free(new_set_label);
         }
         iterator++;
+        //Set_free(curr_set_label);
     }
     
     //After creating all of our dfa states, create and return the dfa
@@ -259,21 +267,25 @@ DFA NFA_to_DFA(NFA nfa){
     }
     
     free(final_states);
-    
+    LinkedList_free(DFA_states, false);
+    LinkedList_free(DFA_sets_labels, false);
+    Set_free(curr_set_label);
+    //free(curr_state);
+    //NFA_free(nfa);
     return this;
 }
 
 //READ-EVALUATE-PRINT-LOOP: DFA
 void repl_DFA(char* name, DFA dfa, char* input, char* quit, char* ask_for_input) {
     printf("\nTesting DFA that recognizes %s\n", name);
+    DFA this = dfa;
     do {
         printf("%s", ask_for_input);
         scanf("%255s", input);
         if (strcmp(input, quit) == 0){
-            //DFA_free(dfa);
+            DFA_free(this);
             break;
         }
-        DFA this = dfa;
         bool b = DFA_execute(this, input);
         if (b) {
             printf("    Result for input \"%s\": true\n", input);
@@ -287,14 +299,14 @@ void repl_DFA(char* name, DFA dfa, char* input, char* quit, char* ask_for_input)
 //READ-EVALUATE-PRINT-LOOP: NFA
 void repl_NFA(char* name, NFA nfa, char* input, char* quit, char* ask_for_input) {
     printf("\nTesting NFA that recognizes %s\n", name);
+    NFA this = nfa;
     do {
         printf("%s", ask_for_input);
         scanf("%255s", input);
         if (strcmp(input, quit) == 0){
-            NFA_free(nfa);
+            NFA_free(this);
             break;
         }
-        NFA this = nfa;
         bool b = NFA_execute(this, input);
         if (b) {
             printf("    Result for input \"%s\": true\n", input);
@@ -306,9 +318,9 @@ void repl_NFA(char* name, NFA nfa, char* input, char* quit, char* ask_for_input)
 }
 
 int main(int argc, char **argv) {
-    char input[255];
-    char quit[10];
-    char ask_for_input[100];
+    char* input = (char*)malloc(255*sizeof(char));
+    char* quit = (char*)malloc(8*sizeof(char));
+    char* ask_for_input = (char*)malloc(50*sizeof(char));
     
     strcpy(quit, "quit");
     strcpy(ask_for_input, "    Enter an input (\"quit\" to quit): ");
@@ -333,5 +345,9 @@ int main(int argc, char **argv) {
     DFA conv_dfa_containsCode = NFA_to_DFA(containsCode());
     repl_DFA("strings ending in ..\"code\"", conv_dfa_endCode, input, quit, ask_for_input);
     repl_DFA("strings containing ..\"code\"..", conv_dfa_containsCode, input, quit, ask_for_input);
+    
+    free(input);
+    free(quit);
+    free(ask_for_input);
     
 }

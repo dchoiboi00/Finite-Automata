@@ -11,7 +11,7 @@
 #include <stdbool.h>
 
 typedef struct {
-    int transitions[128];   //ASCII value, char will automatically convert to 0-127 int
+    int transitions[128];
     bool doesAccept;
 }DFAState;
 
