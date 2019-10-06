@@ -11,16 +11,16 @@
 # build YOUR program for the project.
 #
 
-PROGRAMS = auto IntHashSet LinkedList BitSet
+PROGRAMS = auto
 
 CFLAGS = -g -std=c99 -Wall -Werror
 
 programs: $(PROGRAMS)
 
-auto: dfa.o nfa.o main.o IntHashSet.o BitSet.o LinkedList.o
+auto: dfa.o nfa.o main.o IntHashSet.o LinkedList.o
 	$(CC) -o $@ $^
 
-IntHashSet LinkedList BitSet:
+IntHashSet LinkedList:
 	$(CC) -o $@ $(CFLAGS) -DMAIN $@.c
 
 clean:

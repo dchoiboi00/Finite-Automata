@@ -10,7 +10,6 @@
 		D24C007D232353EF0040B760 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = D24C007C232353EF0040B760 /* main.c */; };
 		D24C0084232359740040B760 /* LinkedList.c in Sources */ = {isa = PBXBuildFile; fileRef = D24C0083232359740040B760 /* LinkedList.c */; };
 		D24C0091232359950040B760 /* IntHashSet.c in Sources */ = {isa = PBXBuildFile; fileRef = D24C008A232359950040B760 /* IntHashSet.c */; };
-		D24C0092232359950040B760 /* BitSet.c in Sources */ = {isa = PBXBuildFile; fileRef = D24C008B232359950040B760 /* BitSet.c */; };
 		D24C0093232359950040B760 /* strdup.c in Sources */ = {isa = PBXBuildFile; fileRef = D24C008E232359950040B760 /* strdup.c */; };
 		D24C0094232359950040B760 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = D24C0090232359950040B760 /* Makefile */; };
 		D28C399323347DFF00D6BED3 /* dfa.c in Sources */ = {isa = PBXBuildFile; fileRef = D28C399223347DFF00D6BED3 /* dfa.c */; };
@@ -39,11 +38,9 @@
 		D24C0088232359950040B760 /* nfa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nfa.h; sourceTree = "<group>"; };
 		D24C0089232359950040B760 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		D24C008A232359950040B760 /* IntHashSet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IntHashSet.c; sourceTree = "<group>"; };
-		D24C008B232359950040B760 /* BitSet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BitSet.c; sourceTree = "<group>"; };
 		D24C008C232359950040B760 /* strdup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strdup.h; sourceTree = "<group>"; };
 		D24C008D232359950040B760 /* Set.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Set.h; sourceTree = "<group>"; };
 		D24C008E232359950040B760 /* strdup.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = strdup.c; sourceTree = "<group>"; };
-		D24C008F232359950040B760 /* BitSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitSet.h; sourceTree = "<group>"; };
 		D24C0090232359950040B760 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		D28C399223347DFF00D6BED3 /* dfa.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dfa.c; sourceTree = "<group>"; };
 		D2BEBD96232F1F6400002CB9 /* nfa.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = nfa.c; sourceTree = "<group>"; };
@@ -79,8 +76,6 @@
 		D24C007B232353EF0040B760 /* Project 1 */ = {
 			isa = PBXGroup;
 			children = (
-				D24C008B232359950040B760 /* BitSet.c */,
-				D24C008F232359950040B760 /* BitSet.h */,
 				D24C0086232359940040B760 /* dfa.h */,
 				D28C399223347DFF00D6BED3 /* dfa.c */,
 				D24C008A232359950040B760 /* IntHashSet.c */,
@@ -156,7 +151,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D24C0094232359950040B760 /* Makefile in Sources */,
-				D24C0092232359950040B760 /* BitSet.c in Sources */,
 				D2BEBD97232F1F6400002CB9 /* nfa.c in Sources */,
 				D24C0091232359950040B760 /* IntHashSet.c in Sources */,
 				D24C0084232359740040B760 /* LinkedList.c in Sources */,
